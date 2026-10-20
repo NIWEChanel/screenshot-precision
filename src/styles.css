@@ -142,3 +142,48 @@
     color: var(--color-foreground);
   }
 }
+
+:root {
+  --background: oklch(0.95 0.035 355);
+  --foreground: oklch(0.38 0.09 5);
+  --card: oklch(1 0 0);
+  --primary: oklch(0.7 0.16 5);
+  --primary-foreground: oklch(1 0 0);
+  --accent: oklch(0.88 0.05 230);
+  --muted-foreground: oklch(0.55 0.07 5);
+  --border: oklch(0.88 0.06 355);
+  --success: oklch(0.72 0.13 160);
+  --sky: oklch(0.86 0.06 225);
+  --radius: 1.5rem;
+  --font-display: "Pacifico", cursive;
+  --font-hand: "Caveat", cursive;
+  --font-sans: "Quicksand", sans-serif;
+  --shadow-soft: 0 14px 40px -12px color-mix(in oklab, var(--primary) 40%, transparent);
+  --bg-clouds: radial-gradient(circle at 15% 20%, oklch(1 0 0 / .7), transparent 35%),
+    radial-gradient(circle at 85% 10%, oklch(0.9 0.06 340 / .8), transparent 40%),
+    radial-gradient(circle at 70% 85%, oklch(1 0 0 / .6), transparent 40%),
+    radial-gradient(circle at 10% 90%, oklch(0.88 0.07 5 / .6), transparent 40%),
+    linear-gradient(160deg, oklch(0.96 0.03 350), oklch(0.92 0.05 0));
+}
+@theme inline {
+  --color-success: var(--success);
+  --color-sky: var(--sky);
+  --font-display: var(--font-display);
+  --font-hand: var(--font-hand);
+  --font-sans: var(--font-sans);
+  --shadow-soft: var(--shadow-soft);
+}
+body { font-family: var(--font-sans); background: var(--bg-clouds); background-attachment: fixed; min-height: 100vh; }
+@utility heart-clip { clip-path: path("M100 180 C40 140 0 100 0 55 C0 20 25 0 55 0 C78 0 92 14 100 30 C108 14 122 0 145 0 C175 0 200 20 200 55 C200 100 160 140 100 180Z"); }
+@utility lined-paper {
+  background-color: var(--card);
+  background-image: repeating-linear-gradient(transparent 0 35px, color-mix(in oklab, var(--primary) 25%, transparent) 35px 36px);
+}
+@keyframes floaty { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
+@keyframes spin-slow { to { transform: rotate(360deg) } }
+@keyframes note { 0% { opacity:0; transform: translateY(0) } 30% {opacity:1} 100% { opacity:0; transform: translateY(-80px) rotate(20deg) } }
+@keyframes pop-in { from { opacity:0; transform: scale(.95) translateY(12px) } to { opacity:1; transform:none } }
+@utility animate-floaty { animation: floaty 4s ease-in-out infinite; }
+@utility animate-spin-slow { animation: spin-slow 4s linear infinite; }
+@utility animate-note { animation: note 2.5s ease-out infinite; }
+@utility animate-pop { animation: pop-in .5s ease-out both; }
