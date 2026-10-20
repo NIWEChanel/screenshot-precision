@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import tulips from "@/assets/tulips.jpg";
-import album from "@/assets/album.jpg";
 import cat from "@/assets/cat.png";
-import couple from "@/assets/couple.jpg";
+import photo1 from "@/assets/photo1.jpg.asset.json";
+import photo2 from "@/assets/photo2.jpg.asset.json";
+import songAsset from "@/assets/bloodline.mp3.asset.json";
 
 // Change the secret code here
 const SECRET_CODE = "1234";
@@ -61,17 +62,15 @@ function Card({ children, className = "" }: { children: ReactNode; className?: s
   return <div className={`rounded-[var(--radius)] border-2 border-border bg-card p-6 shadow-soft ${className}`}>{children}</div>;
 }
 
-function HeartFrame({ src, alt }: { src: string; alt: string }) {
+function CirclePhoto({ src, alt, pos, size = "w-36 h-36 sm:w-44 sm:h-44", delay = 0 }: { src: string; alt: string; pos: string; size?: string; delay?: number }) {
   return (
-    <div className="animate-floaty rounded-full border-4 border-dashed border-border p-2">
-      <svg viewBox="0 0 200 180" className="w-32 sm:w-40" aria-label={alt}>
-        <defs>
-          <clipPath id={`h-${alt}`}>
-            <path d="M100 180 C40 140 0 100 0 55 C0 20 25 0 55 0 C78 0 92 14 100 30 C108 14 122 0 145 0 C175 0 200 20 200 55 C200 100 160 140 100 180Z" />
-          </clipPath>
-        </defs>
-        <image href={src} width="200" height="200" y="-10" preserveAspectRatio="xMidYMid slice" clipPath={`url(#h-${alt})`} />
-      </svg>
+    <div className="animate-floaty relative" style={{ animationDelay: `${delay}s` }}>
+      <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-primary via-sky to-primary opacity-70 blur-md" />
+      <div className="relative rounded-full bg-gradient-to-tr from-primary via-card to-sky p-1.5 shadow-soft">
+        <img src={src} alt={alt} style={{ objectPosition: pos }} className={`${size} rounded-full border-4 border-card object-cover`} />
+      </div>
+      <span className="absolute -right-1 -top-1 text-3xl drop-shadow">💖</span>
+      <span className="absolute -bottom-2 -left-1 text-2xl drop-shadow">🎀</span>
     </div>
   );
 }
@@ -95,9 +94,10 @@ function Lock({ onNext }: { onNext: () => void }) {
     <>
       <Title>Enter our secret code</Title>
       <div className="grid items-center gap-8 md:grid-cols-2">
-        <div className="flex justify-center gap-4">
-          <HeartFrame src={couple} alt="us-1" />
-          <HeartFrame src={album} alt="us-2" />
+        <div className="flex items-center justify-center gap-6">
+          <CirclePhoto src={photo1.url} alt="Her" pos="50% 40%" />
+          <span className="animate-floaty text-4xl text-primary">♥</span>
+          <CirclePhoto src={photo2.url} alt="Him" pos="43% 45%" delay={1} />
         </div>
         <Card className="mx-auto w-full max-w-sm">
           <div className="mb-6 flex justify-center gap-4 text-4xl">
@@ -192,47 +192,51 @@ function Tulips({ back }: { back: () => void }) {
   );
 }
 
-const TRACKS = [
-  { title: "Lover", artist: "Taylor Swift", len: 221 },
-  { title: "Perfect", artist: "Ed Sheeran", len: 263 },
-  { title: "Golden Hour", artist: "JVKE", len: 209 },
-];
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 function Playlist({ back }: { back: () => void }) {
-  const [idx, setIdx] = useState(0);
+  const audio = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [t, setT] = useState(0);
-  const [vol, setVol] = useState(70);
-  const timer = useRef<ReturnType<typeof setInterval>>(undefined);
-  const track = TRACKS[idx] ?? TRACKS[0]!;
+  const [len, setLen] = useState(35);
+  const [vol, setVol] = useState(80);
 
-  useEffect(() => {
-    if (!playing) return;
-    timer.current = setInterval(() => setT((x) => (x + 1 >= track.len ? 0 : x + 1)), 1000);
-    return () => clearInterval(timer.current);
-  }, [playing, track.len]);
+  useEffect(() => { if (audio.current) audio.current.volume = vol / 100; }, [vol]);
 
-  const skip = (d: number) => { setIdx((idx + d + TRACKS.length) % TRACKS.length); setT(0); };
+  const toggle = () => {
+    const a = audio.current;
+    if (!a) return;
+    if (a.paused) { void a.play(); setPlaying(true); } else { a.pause(); setPlaying(false); }
+  };
+  const restart = () => { if (audio.current) { audio.current.currentTime = 0; setT(0); } };
 
   return (
     <>
-      <Title sub="Songs that somehow sound like us">A Playlist Made For You</Title>
+      <Title sub="Our song, our story 💕">Bloodline</Title>
+      <audio
+        ref={audio}
+        src={songAsset.url}
+        loop
+        onTimeUpdate={(e) => setT(e.currentTarget.currentTime)}
+        onLoadedMetadata={(e) => setLen(e.currentTarget.duration)}
+      />
       <div className="grid items-center gap-10 md:grid-cols-2">
-        <Card className="mx-auto w-full max-w-xs">
-          <img src={album} alt="Album art" width={816} height={816} loading="lazy" className="aspect-square w-full rounded-2xl object-cover" />
-          <h2 className="mt-4 text-xl font-bold">{track.title}</h2>
-          <p className="text-muted-foreground">{track.artist}</p>
-          <div className="mt-3 h-2 rounded-full bg-background">
-            <div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${(t / track.len) * 100}%` }} />
+        <Card className="mx-auto w-full max-w-xs text-center">
+          <div className="mx-auto w-fit">
+            <CirclePhoto src={photo1.url} alt="Her" pos="50% 40%" size="w-44 h-44" />
           </div>
-          <div className="mt-1 flex justify-between text-xs text-muted-foreground"><span>{fmt(t)}</span><span>{fmt(track.len)}</span></div>
+          <h2 className="mt-5 font-display text-3xl text-primary">Bloodline</h2>
+          <p className="text-muted-foreground">Made for us ♥</p>
+          <div className="mt-4 h-2 rounded-full bg-background">
+            <div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${(t / (len || 1)) * 100}%` }} />
+          </div>
+          <div className="mt-1 flex justify-between text-xs text-muted-foreground"><span>{fmt(t)}</span><span>{fmt(len)}</span></div>
           <div className="mt-3 flex items-center justify-center gap-6 text-2xl text-primary">
-            <button onClick={() => skip(-1)} aria-label="Previous">⏮</button>
-            <button onClick={() => setPlaying(!playing)} aria-label={playing ? "Pause" : "Play"} className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft">
+            <button onClick={restart} aria-label="Restart">⏮</button>
+            <button onClick={toggle} aria-label={playing ? "Pause" : "Play"} className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft transition hover:scale-110">
               {playing ? "❚❚" : "▶"}
             </button>
-            <button onClick={() => skip(1)} aria-label="Next">⏭</button>
+            <button onClick={restart} aria-label="Replay">🔁</button>
           </div>
           <label className="mt-4 flex items-center gap-2 text-sm">
             🔈<input type="range" min={0} max={100} value={vol} onChange={(e) => setVol(+e.target.value)} className="w-full accent-[var(--primary)]" />🔊
@@ -242,11 +246,11 @@ function Playlist({ back }: { back: () => void }) {
           <Card className="absolute inset-0 flex items-center justify-center p-8">
             <div className={`relative aspect-square w-full rounded-full bg-foreground shadow-soft ${playing ? "animate-spin-slow" : ""}`}
               style={{ backgroundImage: "repeating-radial-gradient(circle, transparent 0 6px, oklch(1 0 0 / .08) 6px 7px)" }}>
-              <img src={album} alt="" className="absolute left-1/2 top-1/2 h-1/3 w-1/3 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover" />
+              <img src={photo2.url} alt="" style={{ objectPosition: "43% 45%" }} className="absolute left-1/2 top-1/2 h-2/5 w-2/5 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-primary object-cover" />
             </div>
             <div className={`absolute right-6 top-6 h-1/2 w-2 origin-top rounded-full bg-muted-foreground transition-transform ${playing ? "rotate-[25deg]" : "rotate-0"}`} />
           </Card>
-          {playing && ["♫", "♪", "♫", "♬"].map((n, i) => (
+          {playing && ["♫", "♪", "♥", "♬"].map((n, i) => (
             <span key={i} className="animate-note absolute text-3xl text-primary" style={{ left: `${10 + i * 25}%`, top: "5%", animationDelay: `${i * 0.6}s` }}>{n}</span>
           ))}
         </div>
