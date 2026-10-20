@@ -160,11 +160,11 @@ function Hub({ go }: { go: (s: Screen) => void }) {
 }
 
 const QUOTES = [
-  "You make my heart bloom",
+  "Utum mbaho nishimye peuh",
   "Life feels sweeter with you",
-  "You make every moment special",
+  "Buruko ndikumwe nawe Igihe kirihuta",
   "I choose you every day",
-  "My love for you keeps growing",
+  "Bloodline urwo nkukunda rwiyongera buri munsi",
   "My heart will always choose you",
 ];
 
@@ -227,7 +227,7 @@ function Playlist({ back }: { back: () => void }) {
 
   return (
     <>
-      <Title sub="Our song, our story 💕">Bloodline</Title>
+      <Title sub="ur song">Bloodline</Title>
       <audio
         ref={audio}
         src={songAsset.url}
@@ -240,7 +240,7 @@ function Playlist({ back }: { back: () => void }) {
         onTimeUpdate={(e) => setT(e.currentTarget.currentTime)}
         onLoadedMetadata={(e) => setLen(Number.isFinite(e.currentTarget.duration) ? e.currentTarget.duration : 0)}
         controls
-        aria-label="Our song"
+        aria-label="ur song"
         className="mx-auto mb-6 block w-full max-w-sm"
       />
       <div className="grid items-center gap-10 md:grid-cols-2">
@@ -249,7 +249,7 @@ function Playlist({ back }: { back: () => void }) {
             <CirclePhoto src={photo1.url} alt="Her" pos="50% 40%" size="w-44 h-44" />
           </div>
           <h2 className="mt-5 font-display text-3xl text-primary">Bloodline</h2>
-          <p className="text-muted-foreground">Made for us ♥</p>
+          <p className="text-muted-foreground">Made for u ♥</p>
           <input
             type="range"
             aria-label="Song progress"
@@ -302,14 +302,16 @@ function Letter({ back }: { back: () => void }) {
     <>
       <Title>A Letter From My Heart</Title>
       <div className="lined-paper mx-auto max-w-2xl rounded-[var(--radius)] border-2 border-border px-8 py-6 font-hand text-2xl leading-[36px] shadow-soft sm:px-12">
-        <p>My love,</p>
+        <p>Bloodline ♾️,</p>
         <p>Every day with you feels like a little gift I get to unwrap again and again. You make ordinary moments feel magical, and my heart feels at home whenever you're near.</p>
-        <p>Thank you for your laugh, your patience, and the way you love me exactly as I am. I'm so grateful for every memory we've made — and so excited for all the ones still waiting for us.</p>
-        <p>I love you more than words could ever hold.</p>
+        <p>Umukobwa w'igikundiro, Rurabo Rudasaza
+Ishimwe Fidélité, izina ryuje ishema, Izina rivuga ibyishimo, umutima ukanezerw Iyo ndyibutse, inseko ihita iza munwa dzirect, Nkuko izuba rirasira isi nyuma yijoro</p>
+        <p>Kandi niba hari umunsi umutima wawe uzashaka kumenya Uwo izina ryawe ryabereye indirimbo, Uzibuke ko hari uwakwanditse mu magambo meza, Akakwita Bloodline.</p>
+        <p>Ndagukunda ♾️</p>
       </div>
       <div className="mt-6 flex flex-col items-center">
         <img src={cat.url} alt="Cute cat holding a heart" width={816} height={816} loading="lazy" className="animate-floaty w-36" />
-        <p className="font-display text-2xl text-primary">Always, forever. 💕</p>
+        <p className="font-display text-2xl text-primary">Always, forever. u</p>
       </div>
       <div className="mt-8 text-center"><PinkButton onClick={back}>Back ↩</PinkButton></div>
     </>
