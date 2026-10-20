@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import tulips from "@/assets/tulips.jpg";
-import cat from "@/assets/cat.png";
+import tulips from "@/assets/tulips.jpg.asset.json";
+import cat from "@/assets/cat.png.asset.json";
 import photo1 from "@/assets/photo1.jpg.asset.json";
 import photo2 from "@/assets/photo2.jpg.asset.json";
 import songAsset from "@/assets/bloodline.mp3.asset.json";
@@ -182,7 +182,7 @@ function Tulips({ back }: { back: () => void }) {
       <div className="grid items-center gap-6 md:grid-cols-[1fr_auto_1fr]">
         <div className="flex flex-col gap-5">{left.map((q, i) => <Bubble key={q} q={q} i={i} />)}</div>
         <Card className="mx-auto p-3">
-          <img src={tulips} alt="Pink tulip bouquet" width={1024} height={1024} className="w-full max-w-sm rounded-2xl" />
+          <img src={tulips.url} alt="Pink tulip bouquet" width={1024} height={1024} className="w-full max-w-sm rounded-2xl" />
           <p className="mt-2 text-center text-2xl">♥ ♥ ♥</p>
         </Card>
         <div className="flex flex-col gap-5">{right.map((q, i) => <Bubble key={q} q={q} i={i + 3} />)}</div>
@@ -271,7 +271,7 @@ function Letter({ back }: { back: () => void }) {
         <p>I love you more than words could ever hold.</p>
       </div>
       <div className="mt-6 flex flex-col items-center">
-        <img src={cat} alt="Cute cat holding a heart" width={816} height={816} loading="lazy" className="animate-floaty w-36" />
+        <img src={cat.url} alt="Cute cat holding a heart" width={816} height={816} loading="lazy" className="animate-floaty w-36" />
         <p className="font-display text-2xl text-primary">Always, forever. 💕</p>
       </div>
       <div className="mt-8 text-center"><PinkButton onClick={back}>Back ↩</PinkButton></div>
