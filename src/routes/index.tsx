@@ -7,7 +7,7 @@ import photo2 from "@/assets/photo2.jpg.asset.json";
 import songAsset from "@/assets/bloodline.mp3.asset.json";
 
 // Change the secret code here
-const SECRET_CODE = "1234";
+const SECRET_CODE = "6666";
 
 export const Route = createFileRoute("/")({
   head: () => ({
