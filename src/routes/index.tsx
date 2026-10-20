@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import tulips from "@/assets/tulips.jpg.asset.json";
-import cat from "@/assets/cat.png.asset.json";
-import photo1 from "@/assets/photo1.jpg.asset.json";
-import photo2 from "@/assets/photo2.jpg.asset.json";
-import songAsset from "@/assets/bloodline.mp3.asset.json";
+const tulips = { url: "/media/tulips.svg" };
+const cat = { url: "/media/cat.svg" };
+const photo1 = { url: "/media/photo1.jpg" };
+const photo2 = { url: "/media/photo2.jpg" };
+const songAsset = { url: "/media/our-song.mp3" };
 
 // Change the secret code here
 const SECRET_CODE = "6666";
@@ -62,7 +62,7 @@ function Card({ children, className = "" }: { children: ReactNode; className?: s
   return <div className={`rounded-[var(--radius)] border-2 border-border bg-card p-6 shadow-soft ${className}`}>{children}</div>;
 }
 
-function CirclePhoto({ src, alt, pos, size = "w-36 h-36 sm:w-44 sm:h-44", delay = 0 }: { src: string; alt: string; pos: string; size?: string; delay?: number }) {
+function CirclePhoto({ src, alt, pos, size = "h-28 w-28 sm:h-44 sm:w-44", delay = 0 }: { src: string; alt: string; pos: string; size?: string; delay?: number }) {
   return (
     <div className="animate-floaty relative" style={{ animationDelay: `${delay}s` }}>
       <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-primary via-sky to-primary opacity-70 blur-md" />
@@ -94,7 +94,7 @@ function Lock({ onNext }: { onNext: () => void }) {
     <>
       <Title>Enter our secret code</Title>
       <div className="grid items-center gap-8 md:grid-cols-2">
-        <div className="flex items-center justify-center gap-6">
+        <div className="flex items-center justify-center gap-3 sm:gap-6">
           <CirclePhoto src={photo1.url} alt="Her" pos="50% 40%" />
           <span className="animate-floaty text-4xl text-primary">♥</span>
           <CirclePhoto src={photo2.url} alt="Him" pos="43% 45%" delay={1} />
@@ -192,21 +192,36 @@ function Tulips({ back }: { back: () => void }) {
   );
 }
 
-const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+const fmt = (s: number) => {
+  const seconds = Number.isFinite(s) ? Math.max(0, s) : 0;
+  return `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
+};
 
 function Playlist({ back }: { back: () => void }) {
   const audio = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [t, setT] = useState(0);
-  const [len, setLen] = useState(35);
+  const [len, setLen] = useState(0);
+  const [error, setError] = useState("");
   const [vol, setVol] = useState(80);
 
   useEffect(() => { if (audio.current) audio.current.volume = vol / 100; }, [vol]);
 
-  const toggle = () => {
+  const toggle = async () => {
     const a = audio.current;
     if (!a) return;
-    if (a.paused) { void a.play(); setPlaying(true); } else { a.pause(); setPlaying(false); }
+    setError("");
+    if (!a.paused) {
+      a.pause();
+      return;
+    }
+    try {
+      if (a.error) a.load();
+      await a.play();
+    } catch {
+      setPlaying(false);
+      setError("The audio could not play. Please try again or use the audio controls below.");
+    }
   };
   const restart = () => { if (audio.current) { audio.current.currentTime = 0; setT(0); } };
 
@@ -217,8 +232,16 @@ function Playlist({ back }: { back: () => void }) {
         ref={audio}
         src={songAsset.url}
         loop
+        preload="metadata"
+        onPlay={() => { setPlaying(true); setError(""); }}
+        onPause={() => setPlaying(false)}
+        onEnded={() => setPlaying(false)}
+        onError={() => { setPlaying(false); setError("The audio could not load. Please check your connection and try again."); }}
         onTimeUpdate={(e) => setT(e.currentTarget.currentTime)}
-        onLoadedMetadata={(e) => setLen(e.currentTarget.duration)}
+        onLoadedMetadata={(e) => setLen(Number.isFinite(e.currentTarget.duration) ? e.currentTarget.duration : 0)}
+        controls
+        aria-label="Our song"
+        className="mx-auto mb-6 block w-full max-w-sm"
       />
       <div className="grid items-center gap-10 md:grid-cols-2">
         <Card className="mx-auto w-full max-w-xs text-center">
@@ -227,9 +250,22 @@ function Playlist({ back }: { back: () => void }) {
           </div>
           <h2 className="mt-5 font-display text-3xl text-primary">Bloodline</h2>
           <p className="text-muted-foreground">Made for us ♥</p>
-          <div className="mt-4 h-2 rounded-full bg-background">
-            <div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${(t / (len || 1)) * 100}%` }} />
-          </div>
+          <input
+            type="range"
+            aria-label="Song progress"
+            min={0}
+            max={len || 1}
+            step={0.1}
+            value={Math.min(t, len || 1)}
+            disabled={!len}
+            onChange={(e) => {
+              if (audio.current) {
+                audio.current.currentTime = Number(e.target.value);
+                setT(Number(e.target.value));
+              }
+            }}
+            className="mt-4 w-full accent-[var(--primary)]"
+          />
           <div className="mt-1 flex justify-between text-xs text-muted-foreground"><span>{fmt(t)}</span><span>{fmt(len)}</span></div>
           <div className="mt-3 flex items-center justify-center gap-6 text-2xl text-primary">
             <button onClick={restart} aria-label="Restart">⏮</button>
@@ -239,8 +275,9 @@ function Playlist({ back }: { back: () => void }) {
             <button onClick={restart} aria-label="Replay">🔁</button>
           </div>
           <label className="mt-4 flex items-center gap-2 text-sm">
-            🔈<input type="range" min={0} max={100} value={vol} onChange={(e) => setVol(+e.target.value)} className="w-full accent-[var(--primary)]" />🔊
+            🔈<input aria-label="Volume" type="range" min={0} max={100} value={vol} onChange={(e) => setVol(+e.target.value)} className="w-full accent-[var(--primary)]" />🔊
           </label>
+          {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
         </Card>
         <div className="relative mx-auto aspect-square w-full max-w-sm">
           <Card className="absolute inset-0 flex items-center justify-center p-8">
