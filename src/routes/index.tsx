@@ -204,8 +204,8 @@ function Playlist({ back }: { back: () => void }) {
   const [playing, setPlaying] = useState(false);
   const [t, setT] = useState(0);
   const [vol, setVol] = useState(70);
-  const timer = useRef<ReturnType<typeof setInterval>>();
-  const track = TRACKS[idx];
+  const timer = useRef<ReturnType<typeof setInterval>>(undefined);
+  const track = TRACKS[idx] ?? TRACKS[0]!;
 
   useEffect(() => {
     if (!playing) return;
