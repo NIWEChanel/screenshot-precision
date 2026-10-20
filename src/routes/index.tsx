@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import tulips from "@/assets/tulips.jpg";
-import cat from "@/assets/cat.png";
+import tulips from "@/assets/tulips.jpg.asset.json";
+import cat from "@/assets/cat.png.asset.json";
 import photo1 from "@/assets/photo1.jpg.asset.json";
 import photo2 from "@/assets/photo2.jpg.asset.json";
 import songAsset from "@/assets/bloodline.mp3.asset.json";
