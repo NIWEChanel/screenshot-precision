@@ -271,7 +271,7 @@ function Letter({ back }: { back: () => void }) {
         <p>I love you more than words could ever hold.</p>
       </div>
       <div className="mt-6 flex flex-col items-center">
-        <img src={cat} alt="Cute cat holding a heart" width={816} height={816} loading="lazy" className="animate-floaty w-36" />
+        <img src={cat.url} alt="Cute cat holding a heart" width={816} height={816} loading="lazy" className="animate-floaty w-36" />
         <p className="font-display text-2xl text-primary">Always, forever. 💕</p>
       </div>
       <div className="mt-8 text-center"><PinkButton onClick={back}>Back ↩</PinkButton></div>
