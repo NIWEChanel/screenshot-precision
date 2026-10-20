@@ -182,7 +182,7 @@ function Tulips({ back }: { back: () => void }) {
       <div className="grid items-center gap-6 md:grid-cols-[1fr_auto_1fr]">
         <div className="flex flex-col gap-5">{left.map((q, i) => <Bubble key={q} q={q} i={i} />)}</div>
         <Card className="mx-auto p-3">
-          <img src={tulips} alt="Pink tulip bouquet" width={1024} height={1024} className="w-full max-w-sm rounded-2xl" />
+          <img src={tulips.url} alt="Pink tulip bouquet" width={1024} height={1024} className="w-full max-w-sm rounded-2xl" />
           <p className="mt-2 text-center text-2xl">♥ ♥ ♥</p>
         </Card>
         <div className="flex flex-col gap-5">{right.map((q, i) => <Bubble key={q} q={q} i={i + 3} />)}</div>
